@@ -1,0 +1,22 @@
+<div style=
+    "
+    background: #2ACECA;
+    height: 50px;
+    width: 350px;
+    margin: 5px;
+    "
+    >
+    <table>
+        <tr>
+            <td>NAME: {{country.name}}</td>
+            <td>REGION: <a href>{{country.region}}</a></td>
+            <td><button>Detail</button></td>
+        </tr>
+    </table>
+    <table ng-if='showDetail'>
+        <tr>
+            <td>POPULATION: {{country.population}}</td>
+            <td>AREA: {{country.area}}</td>
+        </tr>
+    </table>
+</div>

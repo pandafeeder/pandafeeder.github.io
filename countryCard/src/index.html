@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html ng-app="countryCard">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Directive Demo</title>
+</head>
+<body> 
+    <div ng-controller="countriesCtrl">
+        <div id="board" style="margin: 0 auto; width: 80%; float: right">
+            <input style="width: 350px" type="text" placeholder="Search" ng-model="sch">
+            <my-card ng-repeat="country in countries | filter:sch" country='country'></my-card>
+        </div>
+        <div id="pagination" style="float: left; display">
+            <ul style="list-style: none;">
+                <li ng-repeat="pnum in pages"><a href ng-click="changePage(pnum)">PAGE<span ng-bind="pnum"></span></a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
