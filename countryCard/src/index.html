@@ -5,17 +5,22 @@
     <title>Angular Directive Demo</title>
 </head>
 <body> 
+    <div style="height:50px;"><a style="line-height:50px" href="https://github.com/pandafeeder/pandafeeder.github.io/tree/master/countryCard">Source Code</a></div>
     <div ng-controller="countriesCtrl">
-        <div id="board" style="margin: 0 auto; width: 80%; float: right">
-            <input style="width: 350px" type="text" placeholder="Search" ng-model="sch">
-            <my-card ng-repeat="country in countries | filter:sch" country='country'></my-card>
-        </div>
-        <div id="pagination" style="float: left; display">
-            <ul style="list-style: none;">
-                <li ng-repeat="pnum in pages"><a href ng-click="changePage(pnum)">PAGE<span ng-bind="pnum"></span></a></li>
-            </ul>
+        <div ng-switch="loadstatus">
+            <div ng-switch-when="loading"><img src="./img/hourglass.gif"></div>
+            <div ng-switch-when="loaded">
+                <div id="board" style="margin: 0 auto; width: 80%; float: right">
+                    <input style="width: 350px" type="text" placeholder="Search" ng-model="sch">
+                    <my-card ng-repeat="country in countries | filter:sch" country='country'></my-card>
+                </div>
+                <div id="pagination" style="float: left; display">
+                    <ul style="list-style: none;">
+                        <li ng-repeat="pnum in pages"><a href ng-click="changePage(pnum)">PAGE<span ng-bind="pnum"></span></a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-    <div style="clear: both; margin-left:10%"><a href="https://github.com/pandafeeder/pandafeeder.github.io/tree/master/countryCard">Source Code</a></div>
 </body>
 </html>

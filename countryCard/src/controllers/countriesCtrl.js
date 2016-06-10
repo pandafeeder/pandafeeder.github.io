@@ -3,6 +3,7 @@ function countriesCtrl(getCountries, $scope, $filter) {
     var countriesPromise = getCountries.countriesPromise(),
         countries = [],
         pages = []
+    $scope.loadstatus = "loading"
     countriesPromise.then(
         function successCB(data) {
             var pagesLength = Math.ceil(data.length / 9)
@@ -12,6 +13,7 @@ function countriesCtrl(getCountries, $scope, $filter) {
             }
             $scope.countries = countries[0]
             $scope.pages = pages
+            $scope.loadstatus = "loaded"
         },
         function failCB(error) {
             $scope.error = error
