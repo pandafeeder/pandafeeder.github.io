@@ -1,0 +1,10 @@
+<!-- <div>ngRepeat</div> -->
+<div class="animated zoomIn" ng-controller='boardCtrl as vm'>
+    <div><input type="text" ng-model='vm.src' placeholder="SearchByName"></div>
+    <div id="wrapper">
+        <div class="animate-repeat" ng-repeat="i in vm.list | filter: vm.src"> 
+            <h1 ng-bind="vm.name(i.name)"></h1>
+            <a ui-sref="solo({name: i.name})"><img ng-src="./img/{{i.name}}.jpg"></a>
+        </div>
+    </div>
+</div>
