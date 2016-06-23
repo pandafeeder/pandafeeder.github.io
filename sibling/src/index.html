@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular slibing contriller communicate</title>
+</head>
+<body> 
+    <div id="nav" ng-controller="navCtrl as vm">
+        <a href="https://github.com/pandafeeder/pandafeeder.github.io/tree/master/sibling">SOURCE CODE</a>
+        <button ng-click="vm.menuClick(); $event.stopPropagation()">MENU</button>
+    </div>
+    <div id="slide" class="animate-slide" ng-controller="slideCtrl as vm" ng-show="vm.showSlide">
+    </div>
+</body>
+</html>
