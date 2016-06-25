@@ -21,7 +21,7 @@ function slideCtrl($scope) {
         console.log("slideCtrl on documentClicked")
         $scope.$digest()
     })
-    $scope.$on('escapePressed', function(e) {
+    $scope.$on('escapePressed', function() {
         vm.showSlide = false
         console.log("slideCtrl on escapePressed")
         $scope.$digest()
