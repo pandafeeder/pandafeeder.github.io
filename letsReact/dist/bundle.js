@@ -21134,7 +21134,11 @@
 	                _react2.default.createElement(
 	                    "h1",
 	                    null,
-	                    "SOURCE CODE"
+	                    _react2.default.createElement(
+	                        "a",
+	                        { href: "https://github.com/pandafeeder/pandafeeder.github.io/tree/master/letsReact" },
+	                        "SOURCE CODE"
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    "button",
