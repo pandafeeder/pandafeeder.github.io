@@ -17,7 +17,7 @@ export default class Nav extends React.Component{
     render() {
         return(
             <div className="nav" style={navStyleSheet}>
-                <h1>SOURCE CODE</h1>
+                <h1><a href="https://github.com/pandafeeder/pandafeeder.github.io/tree/master/letsReact">SOURCE CODE</a></h1>
                 <button style={buttonStyleSheet} onClick={this.clickHandler}>MENU</button>
             </div>
         )
