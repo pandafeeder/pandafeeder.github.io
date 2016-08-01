@@ -67,9 +67,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(174);
+	__webpack_require__(176);
 	
-	var app = document.getElementById("container");
+	var app = document.getElementById('container');
+	
 	_reactDom2.default.render(_react2.default.createElement(_App2.default, null), app);
 
 /***/ },
@@ -21003,13 +21004,17 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Nav = __webpack_require__(172);
+	var _TodoInput = __webpack_require__(172);
 	
-	var _Nav2 = _interopRequireDefault(_Nav);
+	var _TodoInput2 = _interopRequireDefault(_TodoInput);
 	
-	var _Slide = __webpack_require__(173);
+	var _TodoList = __webpack_require__(173);
 	
-	var _Slide2 = _interopRequireDefault(_Slide);
+	var _TodoList2 = _interopRequireDefault(_TodoList);
+	
+	var _Cate = __webpack_require__(175);
+	
+	var _Cate2 = _interopRequireDefault(_Cate);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -21027,42 +21032,72 @@
 	
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this));
 	
-	        _this.state = { showSlide: false };
-	        _this.toggleSlide = _this.toggleSlide.bind(_this);
+	        _this.state = { itemList: [],
+	            newItem: {
+	                text: '',
+	                completed: false
+	            },
+	            display: 'all' };
+	        _this.addTodoItem = _this.addTodoItem.bind(_this);
+	        _this.newTodoItem = _this.newTodoItem.bind(_this);
+	        _this.completeToggle = _this.completeToggle.bind(_this);
+	        _this.showCate = _this.showCate.bind(_this);
+	        _this.deleteItem = _this.deleteItem.bind(_this);
+	        _this.clearCompleted = _this.clearCompleted.bind(_this);
 	        return _this;
 	    }
 	
 	    _createClass(App, [{
-	        key: 'toggleSlide',
-	        value: function toggleSlide() {
-	            this.setState({ showSlide: !this.state.showSlide });
-	            console.log(this.state.showSlide);
+	        key: 'addTodoItem',
+	        value: function addTodoItem() {
+	            if (this.state.newItem.text) {
+	                this.setState({ itemList: this.state.itemList.concat(this.state.newItem) });
+	                this.setState({ newItem: { text: '', completed: false } });
+	            }
 	        }
 	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            document.addEventListener('keyup', function (e) {
-	                if (e.keyCode === 27) {
-	                    this.setState({ showSlide: false });
-	                }
-	                console.log("keyup");
-	            }.bind(this));
-	            document.addEventListener('click', function () {
-	                this.setState({ showSlide: false });
-	                console.log("click");
-	            }.bind(this));
+	        key: 'newTodoItem',
+	        value: function newTodoItem(text) {
+	            this.setState({ newItem: { text: text, completed: false } });
 	        }
 	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            document.addEventListener('keyup', function (e) {
-	                if (e.keyCode === 27) {
-	                    this.setState({ showSlide: false });
+	        key: 'completeToggle',
+	        value: function completeToggle(id) {
+	            var newItemList = this.state.itemList.map(function (item, index) {
+	                var newItem = Object.assign({}, item);
+	                if (index === id) {
+	                    newItem.completed = !newItem.completed;
 	                }
-	            }.bind(this));
-	            document.addEventListener('click', function () {
-	                this.setState({ showSlide: false });
-	            }.bind(this));
+	                return newItem;
+	            });
+	            this.setState({ itemList: newItemList });
+	        }
+	    }, {
+	        key: 'deleteItem',
+	        value: function deleteItem(id) {
+	            var newItemList = this.state.itemList.filter(function (item, index) {
+	                var newItem = Object.assign({}, item);
+	                if (index !== id) {
+	                    return newItem;
+	                }
+	            });
+	            this.setState({ itemList: newItemList });
+	        }
+	    }, {
+	        key: 'showCate',
+	        value: function showCate(cate) {
+	            this.setState({ display: cate });
+	        }
+	    }, {
+	        key: 'clearCompleted',
+	        value: function clearCompleted() {
+	            var newItemList = this.state.itemList.filter(function (item, index) {
+	                var newItem = Object.assign({}, item);
+	                if (newItem.completed === false) {
+	                    return newItem;
+	                }
+	            });
+	            this.setState({ itemList: newItemList });
 	        }
 	    }, {
 	        key: 'render',
@@ -21070,8 +21105,22 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_Nav2.default, { toggleSlide: this.toggleSlide }),
-	                _react2.default.createElement(_Slide2.default, { showSlide: this.state.showSlide })
+	                _react2.default.createElement(_TodoInput2.default, {
+	                    newItem: this.state.newItem,
+	                    newTodoItem: this.newTodoItem,
+	                    addTodoItem: this.addTodoItem
+	                }),
+	                _react2.default.createElement(_TodoList2.default, {
+	                    completeToggle: this.completeToggle,
+	                    todos: this.state.itemList,
+	                    display: this.state.display,
+	                    deleteItem: this.deleteItem
+	                }),
+	                _react2.default.createElement(_Cate2.default, {
+	                    itemList: this.state.itemList,
+	                    showCate: this.showCate,
+	                    clearCompleted: this.clearCompleted
+	                })
 	            );
 	        }
 	    }]);
@@ -21105,75 +21154,233 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Nav = function (_React$Component) {
-	    _inherits(Nav, _React$Component);
+	var TodoInput = function (_React$Component) {
+	    _inherits(TodoInput, _React$Component);
 	
-	    function Nav() {
-	        _classCallCheck(this, Nav);
+	    function TodoInput() {
+	        _classCallCheck(this, TodoInput);
 	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Nav).call(this));
-	
-	        _this.clickHandler = _this.clickHandler.bind(_this);
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoInput).apply(this, arguments));
 	    }
 	
-	    _createClass(Nav, [{
-	        key: "clickHandler",
-	        value: function clickHandler(e) {
-	            //e.stopPropagation() will not work
-	            e.nativeEvent.stopImmediatePropagation();
-	            console.log("CLICKED");
-	            this.props.toggleSlide();
+	    _createClass(TodoInput, [{
+	        key: "submitHandler",
+	        value: function submitHandler(e) {
+	            e.preventDefault();
+	            this.props.addTodoItem();
+	        }
+	    }, {
+	        key: "changeHandler",
+	        value: function changeHandler(e) {
+	            this.props.newTodoItem(e.target.value);
 	        }
 	    }, {
 	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
-	                "div",
-	                { className: "nav", style: navStyleSheet },
+	                "form",
+	                { className: "toDoInput", onSubmit: this.submitHandler.bind(this) },
+	                _react2.default.createElement("input", { value: this.props.newItem.text, onChange: this.changeHandler.bind(this), type: "text", placeholder: "输入新的事项" })
+	            );
+	        }
+	    }]);
+	
+	    return TodoInput;
+	}(_react2.default.Component);
+	
+	exports.default = TodoInput;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TodoItem = __webpack_require__(174);
+	
+	var _TodoItem2 = _interopRequireDefault(_TodoItem);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var TodoList = function (_React$Component) {
+	    _inherits(TodoList, _React$Component);
+	
+	    function TodoList() {
+	        _classCallCheck(this, TodoList);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoList).apply(this, arguments));
+	    }
+	
+	    _createClass(TodoList, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            var Todos = [];
+	            if (this.props.display === 'all') {
+	                Todos = this.props.todos.map(function (item, index) {
+	                    return _react2.default.createElement(
+	                        _TodoItem2.default,
+	                        {
+	                            completeToggle: _this2.props.completeToggle,
+	                            deleteItem: _this2.props.deleteItem,
+	                            key: index, id: index, item: item },
+	                        item.text
+	                    );
+	                });
+	            }
+	            if (this.props.display === 'active') {
+	                Todos = this.props.todos.map(function (item, index) {
+	                    if (!item.completed) {
+	                        return _react2.default.createElement(
+	                            _TodoItem2.default,
+	                            {
+	                                completeToggle: _this2.props.completeToggle,
+	                                deleteItem: _this2.props.deleteItem,
+	                                key: index, id: index, item: item },
+	                            item.text
+	                        );
+	                    }
+	                });
+	            }
+	            if (this.props.display === 'completed') {
+	                Todos = this.props.todos.map(function (item, index) {
+	                    if (item.completed) {
+	                        return _react2.default.createElement(
+	                            _TodoItem2.default,
+	                            {
+	                                completeToggle: _this2.props.completeToggle,
+	                                deleteItem: _this2.props.deleteItem,
+	                                key: index, id: index, item: item },
+	                            item.text
+	                        );
+	                    }
+	                });
+	            }
+	            return _react2.default.createElement(
+	                'table',
+	                { cellSpacing: '0', className: 'toDoList' },
+	                Todos
+	            );
+	        }
+	    }]);
+	
+	    return TodoList;
+	}(_react2.default.Component);
+	
+	exports.default = TodoList;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var TodoItem = function (_React$Component) {
+	    _inherits(TodoItem, _React$Component);
+	
+	    function TodoItem() {
+	        _classCallCheck(this, TodoItem);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoItem).apply(this, arguments));
+	    }
+	
+	    _createClass(TodoItem, [{
+	        key: "changeHandler",
+	        value: function changeHandler(e, id) {
+	            this.props.completeToggle(this.props.id);
+	        }
+	    }, {
+	        key: "clickHandler",
+	        value: function clickHandler(e, id) {
+	            this.props.deleteItem(this.props.id);
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var itemStyle = this.props.item.completed ? completedStyle : activeStyle;
+	            return _react2.default.createElement(
+	                "tbody",
+	                null,
 	                _react2.default.createElement(
-	                    "h1",
-	                    null,
+	                    "tr",
+	                    { className: "toDoItem", style: itemStyle },
 	                    _react2.default.createElement(
-	                        "a",
-	                        { href: "https://github.com/pandafeeder/pandafeeder.github.io/tree/master/letsReact" },
-	                        "SOURCE CODE"
+	                        "td",
+	                        null,
+	                        _react2.default.createElement("input", { onChange: this.changeHandler.bind(this), type: "checkbox", checked: this.props.item.completed })
+	                    ),
+	                    _react2.default.createElement(
+	                        "td",
+	                        { id: "text" },
+	                        _react2.default.createElement(
+	                            "span",
+	                            { style: itemStyle },
+	                            this.props.children
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        "td",
+	                        null,
+	                        _react2.default.createElement(
+	                            "button",
+	                            { onClick: this.clickHandler.bind(this) },
+	                            "X"
+	                        )
 	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "button",
-	                    { style: buttonStyleSheet, onClick: this.clickHandler },
-	                    "MENU"
 	                )
 	            );
 	        }
 	    }]);
 	
-	    return Nav;
+	    return TodoItem;
 	}(_react2.default.Component);
 	
-	exports.default = Nav;
+	exports.default = TodoItem;
 	
 	
-	var navStyleSheet = {
-	    position: "absolute",
-	    top: 0,
-	    background: '#2192ea',
-	    height: 100,
-	    width: "100%",
-	    textAlign: 'center'
+	var completedStyle = {
+	    textDecoration: 'line-through'
 	};
 	
-	var buttonStyleSheet = {
-	    height: 'inherit',
-	    width: 100,
-	    position: "absolute",
-	    top: 0,
-	    right: 0
-	};
+	var activeStyle = {};
 
 /***/ },
-/* 173 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21196,67 +21403,80 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Slide = function (_React$Component) {
-	    _inherits(Slide, _React$Component);
+	var Cate = function (_React$Component) {
+	    _inherits(Cate, _React$Component);
 	
-	    function Slide() {
-	        _classCallCheck(this, Slide);
+	    function Cate() {
+	        _classCallCheck(this, Cate);
 	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Slide).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Cate).apply(this, arguments));
 	    }
 	
-	    _createClass(Slide, [{
+	    _createClass(Cate, [{
+	        key: 'handleAll',
+	        value: function handleAll(e) {
+	            this.props.showCate(e.target.value);
+	        }
+	    }, {
+	        key: 'handleActive',
+	        value: function handleActive(e) {
+	            this.props.showCate(e.target.value);
+	        }
+	    }, {
+	        key: 'handleCompleted',
+	        value: function handleCompleted(e) {
+	            this.props.showCate(e.target.value);
+	        }
+	    }, {
+	        key: 'handleClearCompleted',
+	        value: function handleClearCompleted(e) {
+	            this.props.clearCompleted();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('div', { style: this.props.showSlide ? showStyleSheet : hideStyleSheet });
+	            var showOrNotStyle = this.props.itemList.length > 0 ? {} : { display: 'none' };
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'cate', style: showOrNotStyle },
+	                _react2.default.createElement('input', { onChange: this.handleAll.bind(this), type: 'radio', name: 'cate', value: 'all', defaultChecked: true }),
+	                '所有',
+	                _react2.default.createElement('input', { onChange: this.handleActive.bind(this), type: 'radio', name: 'cate', value: 'active' }),
+	                '未完成',
+	                _react2.default.createElement('input', { onChange: this.handleCompleted.bind(this), type: 'radio', name: 'cate', value: 'completed' }),
+	                '完成',
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.handleClearCompleted.bind(this) },
+	                    '清除已完成'
+	                )
+	            );
 	        }
 	    }]);
 	
-	    return Slide;
+	    return Cate;
 	}(_react2.default.Component);
 	
-	exports.default = Slide;
-	
-	
-	var hideStyleSheet = {
-	    background: 'green',
-	    width: 200,
-	    height: '100%',
-	    position: "absolute",
-	    top: "0px",
-	    right: -200,
-	    transition: "all ease-in-out 0.3s",
-	    WebkitTransition: "all ease-in-out 0.3s"
-	};
-	var showStyleSheet = {
-	    background: 'green',
-	    width: 200,
-	    height: '100%',
-	    position: "absolute",
-	    top: "0px",
-	    right: 0,
-	    transition: "all ease-in-out 0.3s",
-	    WebkitTransition: "all ease-in-out 0.3s"
-	};
+	exports.default = Cate;
 
 /***/ },
-/* 174 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(175);
+	var content = __webpack_require__(177);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(177)(content, {});
+	var update = __webpack_require__(179)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./main.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./main.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./app.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./app.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -21266,21 +21486,21 @@
 	}
 
 /***/ },
-/* 175 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(176)();
+	exports = module.exports = __webpack_require__(178)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "body {\n    overflow-x: hidden;\n}\n\nhtml, body {\n    padding: 0px;\n    margin: 0px;\n}\n", ""]);
+	exports.push([module.id, "body {\n    background-color: #b9c787;\n    margin: 0;\n    padding: 0;\n    font-family: Helvetica , serif;\n}\n\n#container {\n    position: absolute;\n    width: 40%;\n    left: 30%;\n    right: 30%;\n    top: 15%;\n}\n\n.toDoInput {\n    width: 100%;\n}\n\n.toDoInput > input[type=text] {\n    width: 90%;\n    font-style: italic;\n    height: 30px;\n    font-size: 15px;\n    padding: 10px 5%;\n    border: none;\n    outline: none;\n    box-shadow: 3px 3px 10px #888888;\n}\n\n.toDoItem {\n    width: 90%;\n    min-height: 30px;\n    background-color:white;\n    padding: 10px 5%;\n    /*word-break:break-all;*/\n    box-shadow: 3px 3px 10px #888888;\n}\n\n\n.toDoItem td {\n    padding: 15px 10px;\n    vertical-align: middle;\n    border-bottom: 0.5px solid black;\n}\n\n.toDoItem  > input[type=checkbox] {\n}\n\n#text {\n    width: 100%;\n}\n\n\n.toDoItem button {\n}\n\n.toDoList {\n    width: 100%;\n    padding: 0 0;\n    box-shadow: 3px 3px 10px #888888;\n}\n\n.cate {\n    background: white;\n    height: 30px;\n    width: 90%;\n    padding: 5px 5%;\n    box-shadow: 3px 3px 10px #888888;\n}\n\n.cate {\n    font-size: 12px;\n}\n\n.cate button {\n    color: white;\n    float: right;\n    background-color: #b9c787;\n    border: none;\n    padding: 5px;\n    border-radius: 3px;\n    box-shadow: 3px 3px 3px #888888;\n    outline: none;\n}\n.cate button:hover {\n    color: #b9c787;\n    background-color: white;\n}\n.cate button:active {\n    box-shadow: 0 5px #888888;\n    transform: translateY(5px);\n}\n\n\n\n\n/*\n.toDoInput > input[type=submit] {\n    background-color: #4CAF50;\n    color: white;\n    padding: 8px 10px;\n    border: none;\n    margin-left: 5px;\n    border-radius: 5px;\n}\n*/\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 176 */
+/* 178 */
 /***/ function(module, exports) {
 
 	/*
@@ -21336,7 +21556,7 @@
 
 
 /***/ },
-/* 177 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
