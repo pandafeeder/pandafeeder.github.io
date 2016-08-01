@@ -1,0 +1,107 @@
+body {
+    background-color: #b9c787;
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica , serif;
+}
+
+#container {
+    position: absolute;
+    width: 40%;
+    left: 30%;
+    right: 30%;
+    top: 15%;
+}
+
+.toDoInput {
+    width: 100%;
+}
+
+.toDoInput > input[type=text] {
+    width: 90%;
+    font-style: italic;
+    height: 30px;
+    font-size: 15px;
+    padding: 10px 5%;
+    border: none;
+    outline: none;
+    box-shadow: 3px 3px 10px #888888;
+}
+
+.toDoItem {
+    width: 90%;
+    min-height: 30px;
+    background-color:white;
+    padding: 10px 5%;
+    /*word-break:break-all;*/
+    box-shadow: 3px 3px 10px #888888;
+}
+
+
+.toDoItem td {
+    padding: 15px 10px;
+    vertical-align: middle;
+    border-bottom: 0.5px solid black;
+}
+
+.toDoItem  > input[type=checkbox] {
+}
+
+#text {
+    width: 100%;
+}
+
+
+.toDoItem button {
+}
+
+.toDoList {
+    width: 100%;
+    padding: 0 0;
+    box-shadow: 3px 3px 10px #888888;
+}
+
+.cate {
+    background: white;
+    height: 30px;
+    width: 90%;
+    padding: 5px 5%;
+    box-shadow: 3px 3px 10px #888888;
+}
+
+.cate {
+    font-size: 12px;
+}
+
+.cate button {
+    color: white;
+    float: right;
+    background-color: #b9c787;
+    border: none;
+    padding: 5px;
+    border-radius: 3px;
+    box-shadow: 3px 3px 3px #888888;
+    outline: none;
+}
+.cate button:hover {
+    color: #b9c787;
+    background-color: white;
+}
+.cate button:active {
+    box-shadow: 0 5px #888888;
+    transform: translateY(5px);
+}
+
+
+
+
+/*
+.toDoInput > input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 10px;
+    border: none;
+    margin-left: 5px;
+    border-radius: 5px;
+}
+*/
