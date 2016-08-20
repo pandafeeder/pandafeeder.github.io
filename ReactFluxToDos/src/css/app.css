@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    padding:0;
+    background-color: #b9c787;
+}
+
+#container {
+    position: absolute;
+    width: 50%;
+    top: 20%;
+    left: 25%;
+}
+
+.todoInput > input {
+    width: 90%;
+    height: 30px;
+    outline: none;
+    padding: 5px 5%;
+}
