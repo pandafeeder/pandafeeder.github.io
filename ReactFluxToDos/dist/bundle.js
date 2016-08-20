@@ -21591,8 +21591,8 @@
 	                    delTodo: this.delTodo,
 	                    todos: this.state.todos,
 	                    completeToggle: this.completeToggle }),
-	                this.state.todos.length > 0 ? _react2.default.createElement(_Cate2.default, { clearCompleted: this.clearCompleted,
-	                    showCate: this.showCate }) : _react2.default.createElement('div', null)
+	                _react2.default.createElement(_Cate2.default, { clearCompleted: this.clearCompleted,
+	                    showCate: this.showCate })
 	            );
 	        }
 	    }]);
