@@ -17,3 +17,8 @@ body {
     outline: none;
     padding: 5px 5%;
 }
+
+.mailto {
+    text-align: center;
+    margin-top: 50px;
+}

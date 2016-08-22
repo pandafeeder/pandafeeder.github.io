@@ -67,7 +67,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(188);
+	__webpack_require__(189);
 	
 	var app = document.getElementById("container");
 	
@@ -21511,7 +21511,11 @@
 	
 	var _Cate2 = _interopRequireDefault(_Cate);
 	
-	var _Actions = __webpack_require__(187);
+	var _MailTo = __webpack_require__(187);
+	
+	var _MailTo2 = _interopRequireDefault(_MailTo);
+	
+	var _Actions = __webpack_require__(188);
 	
 	var Action = _interopRequireWildcard(_Actions);
 	
@@ -21581,6 +21585,11 @@
 	            });
 	        }
 	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            _TodoStore2.default.removeAllListeners();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -21592,7 +21601,8 @@
 	                    todos: this.state.todos,
 	                    completeToggle: this.completeToggle }),
 	                _react2.default.createElement(_Cate2.default, { clearCompleted: this.clearCompleted,
-	                    showCate: this.showCate })
+	                    showCate: this.showCate }),
+	                _react2.default.createElement(_MailTo2.default, { todos: this.state.todos })
 	            );
 	        }
 	    }]);
@@ -22762,6 +22772,167 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TodoStore = __webpack_require__(180);
+	
+	var _TodoStore2 = _interopRequireDefault(_TodoStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var MailTo = function (_React$Component) {
+	    _inherits(MailTo, _React$Component);
+	
+	    function MailTo() {
+	        _classCallCheck(this, MailTo);
+	
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MailTo).call(this));
+	
+	        _this.state = {
+	            address: '',
+	            showInput: false,
+	            buttonTag: 'Send this to-do-list as Email to:',
+	            href: '',
+	            addressLegle: false
+	        };
+	        return _this;
+	    }
+	
+	    _createClass(MailTo, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _this2 = this;
+	
+	            _TodoStore2.default.on('change', function () {
+	                _this2.getAddress();
+	            });
+	        }
+	    }, {
+	        key: 'getAddress',
+	        value: function getAddress(e) {
+	            if (this.props.todos.length === 0) {
+	                return;
+	            }
+	            var address = void 0;
+	            try {
+	                address = e.target.value;
+	            } catch (e) {
+	                address = this.state.address;
+	            }
+	
+	            var reg = /.*@[^\.]*\..*/;
+	            var body = this.props.todos.map(function (item, index) {
+	                return index + 1 + ' ' + item.text + '%0D%0A';
+	            });
+	            //body = body.toString().replace(/\s+/g, '%20')
+	            body = body.reduce(function (x, y) {
+	                return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20');
+	                //return x + y
+	            });
+	            var subject = 'to-do-list@' + new Date().toString().replace(/\s+/g, '%20');
+	            var href = 'mailto:' + address + '?subject=' + subject + '&body=' + body;
+	            this.setState({
+	                address: address,
+	                href: href });
+	            if (reg.exec(this.state.address)) {
+	                this.setState({ addressLegle: true });
+	            }
+	        }
+	    }, {
+	        key: 'showInput',
+	        value: function showInput() {
+	            var tag = ['Send this to-do-list as Email to:', 'CANCEL'];
+	            var toggle = !this.state.showInput;
+	            this.setState({
+	                showInput: toggle,
+	                buttonTag: tag[toggle ? 1 : 0]
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var input = this.state.showInput ? _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement('input', { type: 'text',
+	                    style: styleSheet.input,
+	                    onChange: this.getAddress.bind(this),
+	                    value: this.props.todos.length > 0 ? this.state.address : 'No todo item yet'
+	                }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'a',
+	                    { href: this.state.href },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { disabled: this.props.todos.length > 0 && this.state.addressLegle ? false : true, style: styleSheet.button },
+	                        'SEND'
+	                    )
+	                )
+	            ) : _react2.default.createElement('div', null);
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'mailto' },
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.showInput.bind(this), style: styleSheet.button },
+	                    this.state.buttonTag
+	                ),
+	                input
+	            );
+	        }
+	    }]);
+	
+	    return MailTo;
+	}(_react2.default.Component);
+	
+	exports.default = MailTo;
+	
+	
+	var styleSheet = {
+	    button: {
+	        backgroundColor: '#f98f07',
+	        border: 'none',
+	        fontSize: '20px',
+	        lineHeight: '30px',
+	        borderRadius: '3px',
+	        width: '300px',
+	        outline: 'none'
+	    },
+	    input: {
+	        height: '30px',
+	        width: '300px',
+	        border: 'none',
+	        outline: 'none',
+	        borderRadius: '3px',
+	        msBoxSizing: 'content-box',
+	        MozBoxSizing: 'content-box',
+	        WebkitBoxSizing: 'content-box',
+	        boxSizing: 'content-box',
+	        textAlign: 'center'
+	    }
+	};
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.AddTodo = AddTodo;
 	exports.DeleteTodo = DeleteTodo;
 	exports.CompleteToggle = CompleteToggle;
@@ -22810,16 +22981,16 @@
 	}
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(189);
+	var content = __webpack_require__(190);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(191)(content, {});
+	var update = __webpack_require__(192)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -22836,21 +23007,21 @@
 	}
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(190)();
+	exports = module.exports = __webpack_require__(191)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "body {\n    margin: 0;\n    padding:0;\n    background-color: #b9c787;\n}\n\n#container {\n    position: absolute;\n    width: 50%;\n    top: 20%;\n    left: 25%;\n}\n\n.todoInput > input {\n    width: 90%;\n    height: 30px;\n    outline: none;\n    padding: 5px 5%;\n}\n", ""]);
+	exports.push([module.id, "body {\n    margin: 0;\n    padding:0;\n    background-color: #b9c787;\n}\n\n#container {\n    position: absolute;\n    width: 50%;\n    top: 20%;\n    left: 25%;\n}\n\n.todoInput > input {\n    width: 90%;\n    height: 30px;\n    outline: none;\n    padding: 5px 5%;\n}\n\n.mailto {\n    text-align: center;\n    margin-top: 50px;\n}\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	/*
@@ -22906,7 +23077,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

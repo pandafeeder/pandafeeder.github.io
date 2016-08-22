@@ -5,6 +5,7 @@ import TodoInput from '../components/TodoInput'
 import TodoList from '../components/TodoList'
 import todoStore from '../stores/TodoStore'
 import Cate from '../components/Cate'
+import MailTo from '../components/MailTo'
 import * as Action from '../actions/Actions'
 
 export default class Todo extends React.Component {
@@ -48,6 +49,10 @@ export default class Todo extends React.Component {
         })
     }
 
+    componentWillUnmount() {
+        todoStore.removeAllListeners()
+    }
+
     render() {
         return(
             <div>
@@ -58,6 +63,7 @@ export default class Todo extends React.Component {
                     completeToggle={this.completeToggle}/>
                     <Cate clearCompleted={this.clearCompleted}
                           showCate={this.showCate}/> 
+                    <MailTo todos={this.state.todos}/>
             </div>
         )
     }
