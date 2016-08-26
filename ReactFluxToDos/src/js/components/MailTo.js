@@ -8,6 +8,7 @@ export default class MailTo extends React.Component {
                        address: '', 
                        showInput: false,
                        buttonTag: 'Send this to-do-list as Email to:',
+                       //href: this.getAddress(),
                        href: '',
                        addressLegle: false,
         }

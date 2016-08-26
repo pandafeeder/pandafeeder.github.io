@@ -9,6 +9,26 @@ class TodoStore extends EventEmitter {
         super()
         this.todos = []
         this.cate = []
+        this.mailto = {
+            showInput: false,
+            address: '',
+            buttonTag: ['Send this to-do-list as Emal to:', 'CANCE'],
+            href: '',
+            addressLegale: false,
+        }
+    }
+    getHref() {
+        if (this.todos.length > 0) {
+            let todoString = this.todos.map((item, index) => {
+                return (index+1)+' '+item.text+'%0D%0A'
+            })
+            todoString = todoString.reduce((x, y) => {
+                return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20')
+            })
+            let subject = 'to-do-list'+(new Date).toString().replace(/\s+/g, '%20')
+            let href = `mailto:${this.mailto.address}?subject=${subject}&body=${todoString}`
+            this.mailto.href = href
+        }
     }
     createTodo(text) {
         let id = Date.now()
@@ -17,6 +37,10 @@ class TodoStore extends EventEmitter {
                  complete: false,
                  id,
                 })
+        let href = this.todos.reduce((x,y) => {
+            return x.text + y.text})
+
+        this.mailto = Object.assign(this.mailto, {href,})
         this.emit("change")
     }
     deleteTodo(id) {
@@ -63,8 +87,32 @@ class TodoStore extends EventEmitter {
         }
         this.emit("cate")
     }
+    switchMail() {
+        this.mailto = Object.assign(this.mailto, {showInput: !this.mailto.showInput})
+        this.emit("change")
+    }
+    mailInput(text) {
+        this.mailto = Object.assign(this.mailto, {address: text})
+        let reg = /[^@]+@[^\.]+\.[^\.]+/
+        if (reg.exec(text)) {
+            this.mailto = Object.assign(this.mailto, {addressLegale: true})
+            //let todoString = this.todos.map((item, index) => {
+            //    return (index+1)+' '+item.text+'%0D%0A'
+            //})
+            //todoString = todoString.reduce((x, y) => {
+            //    return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20')
+            //})
+            //let subject = 'to-do-list'+(new Date).toString().replace(/\s+/g, '%20')
+            //let href = `mailto:${this.mailto.address}?subject=${subject}&body=${todoString}`
+            //this.mailto = Object.assign(this.mailto, {href,})
+        }
+        this.emit("change")
+    }
     getAll() {
         return this.todos
+    }
+    getMailto() {
+        return this.mailto
     }
     getCate() {
         return this.cate
@@ -91,6 +139,14 @@ class TodoStore extends EventEmitter {
                 console.log("SHOW_CATE RECEIVED")
                 this.showCate(action.payload)
                 break
+            case 'SWITCH_MAIL':
+                console.log("SWITCH_MAIL RECEIVED")
+                this.switchMail()
+                break
+            case 'MAIL_INPUT':
+                console.log("MAIL_INPT RECEIVED")
+                this.mailInput(action.payload)
+                break
             default:
                 console.log("ACTION UNRECOGNIZED")
                 break
@@ -99,6 +155,9 @@ class TodoStore extends EventEmitter {
 }
 
 const todoStore = new TodoStore
+todoStore.on('change', () => {
+    todoStore.getHref()
+})
 
 dispatcher.register((action) => {
     todoStore.handleDispatch(action)

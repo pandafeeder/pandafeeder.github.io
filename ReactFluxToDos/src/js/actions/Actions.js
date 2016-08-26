@@ -41,3 +41,20 @@ export function ShowCate(value) {
                 payload: value
             })
 }
+
+export function SwitchMail() {
+    dispatcher.dispatch(
+            {
+                type: 'SWITCH_MAIL',
+                payload: ''
+            })
+}
+
+export function inputMailAddress(text) {
+    dispatcher.dispatch(
+            {
+                type: 'MAIL_INPUT',
+                payload: text
+            })
+}
+

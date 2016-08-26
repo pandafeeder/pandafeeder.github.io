@@ -21538,12 +21538,15 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Todo).call(this));
 	
 	        _this.state = {
-	            todos: _TodoStore2.default.getAll()
+	            todos: _TodoStore2.default.getAll(),
+	            mailto: _TodoStore2.default.getMailto()
 	        };
 	        _this.addTodo = _this.addTodo.bind(_this);
 	        _this.delTodo = _this.delTodo.bind(_this);
 	        _this.completeToggle = _this.completeToggle.bind(_this);
 	        _this.clearCompleted = _this.clearCompleted.bind(_this);
+	        _this.mailSwitch = _this.mailSwitch.bind(_this);
+	        _this.mailInput = _this.mailInput.bind(_this);
 	        return _this;
 	    }
 	
@@ -21573,15 +21576,27 @@
 	            Action.ShowCate(value);
 	        }
 	    }, {
+	        key: 'mailSwitch',
+	        value: function mailSwitch() {
+	            Action.SwitchMail();
+	        }
+	    }, {
+	        key: 'mailInput',
+	        value: function mailInput(text) {
+	            Action.inputMailAddress(text);
+	        }
+	    }, {
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            var _this2 = this;
 	
 	            _TodoStore2.default.on('change', function () {
-	                _this2.setState({ todos: _TodoStore2.default.getAll() });
+	                _this2.setState({ todos: _TodoStore2.default.getAll(),
+	                    mailto: _TodoStore2.default.getMailto() });
 	            });
 	            _TodoStore2.default.on('cate', function () {
-	                _this2.setState({ todos: _TodoStore2.default.getCate() });
+	                _this2.setState({ todos: _TodoStore2.default.getCate(),
+	                    mailto: _TodoStore2.default.getMailto() });
 	            });
 	        }
 	    }, {
@@ -21602,7 +21617,12 @@
 	                    completeToggle: this.completeToggle }),
 	                _react2.default.createElement(_Cate2.default, { clearCompleted: this.clearCompleted,
 	                    showCate: this.showCate }),
-	                _react2.default.createElement(_MailTo2.default, { todos: this.state.todos })
+	                _react2.default.createElement(_MailTo2.default, {
+	                    todos: this.state.todos,
+	                    mailto: this.state.mailto,
+	                    mailSwitch: this.mailSwitch,
+	                    mailInput: this.mailInput
+	                })
 	            );
 	        }
 	    }]);
@@ -21921,10 +21941,32 @@
 	
 	        _this.todos = [];
 	        _this.cate = [];
+	        _this.mailto = {
+	            showInput: false,
+	            address: '',
+	            buttonTag: ['Send this to-do-list as Emal to:', 'CANCE'],
+	            href: '',
+	            addressLegale: false
+	        };
 	        return _this;
 	    }
 	
 	    _createClass(TodoStore, [{
+	        key: 'getHref',
+	        value: function getHref() {
+	            if (this.todos.length > 0) {
+	                var todoString = this.todos.map(function (item, index) {
+	                    return index + 1 + ' ' + item.text + '%0D%0A';
+	                });
+	                todoString = todoString.reduce(function (x, y) {
+	                    return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20');
+	                });
+	                var subject = 'to-do-list' + new Date().toString().replace(/\s+/g, '%20');
+	                var href = 'mailto:' + this.mailto.address + '?subject=' + subject + '&body=' + todoString;
+	                this.mailto.href = href;
+	            }
+	        }
+	    }, {
 	        key: 'createTodo',
 	        value: function createTodo(text) {
 	            var id = Date.now();
@@ -21932,6 +21974,11 @@
 	                complete: false,
 	                id: id
 	            });
+	            var href = this.todos.reduce(function (x, y) {
+	                return x.text + y.text;
+	            });
+	
+	            this.mailto = Object.assign(this.mailto, { href: href });
 	            this.emit("change");
 	        }
 	    }, {
@@ -21987,9 +22034,39 @@
 	            this.emit("cate");
 	        }
 	    }, {
+	        key: 'switchMail',
+	        value: function switchMail() {
+	            this.mailto = Object.assign(this.mailto, { showInput: !this.mailto.showInput });
+	            this.emit("change");
+	        }
+	    }, {
+	        key: 'mailInput',
+	        value: function mailInput(text) {
+	            this.mailto = Object.assign(this.mailto, { address: text });
+	            var reg = /[^@]+@[^\.]+\.[^\.]+/;
+	            if (reg.exec(text)) {
+	                this.mailto = Object.assign(this.mailto, { addressLegale: true });
+	                //let todoString = this.todos.map((item, index) => {
+	                //    return (index+1)+' '+item.text+'%0D%0A'
+	                //})
+	                //todoString = todoString.reduce((x, y) => {
+	                //    return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20')
+	                //})
+	                //let subject = 'to-do-list'+(new Date).toString().replace(/\s+/g, '%20')
+	                //let href = `mailto:${this.mailto.address}?subject=${subject}&body=${todoString}`
+	                //this.mailto = Object.assign(this.mailto, {href,})
+	            }
+	            this.emit("change");
+	        }
+	    }, {
 	        key: 'getAll',
 	        value: function getAll() {
 	            return this.todos;
+	        }
+	    }, {
+	        key: 'getMailto',
+	        value: function getMailto() {
+	            return this.mailto;
 	        }
 	    }, {
 	        key: 'getCate',
@@ -22020,6 +22097,14 @@
 	                    console.log("SHOW_CATE RECEIVED");
 	                    this.showCate(action.payload);
 	                    break;
+	                case 'SWITCH_MAIL':
+	                    console.log("SWITCH_MAIL RECEIVED");
+	                    this.switchMail();
+	                    break;
+	                case 'MAIL_INPUT':
+	                    console.log("MAIL_INPT RECEIVED");
+	                    this.mailInput(action.payload);
+	                    break;
 	                default:
 	                    console.log("ACTION UNRECOGNIZED");
 	                    break;
@@ -22031,6 +22116,9 @@
 	}(_events2.default);
 	
 	var todoStore = new TodoStore();
+	todoStore.on('change', function () {
+	    todoStore.getHref();
+	});
 	
 	_Dispatcher2.default.register(function (action) {
 	    todoStore.handleDispatch(action);
@@ -22779,10 +22867,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TodoStore = __webpack_require__(180);
-	
-	var _TodoStore2 = _interopRequireDefault(_TodoStore);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22797,97 +22881,51 @@
 	    function MailTo() {
 	        _classCallCheck(this, MailTo);
 	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MailTo).call(this));
-	
-	        _this.state = {
-	            address: '',
-	            showInput: false,
-	            buttonTag: 'Send this to-do-list as Email to:',
-	            href: '',
-	            addressLegle: false
-	        };
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(MailTo).apply(this, arguments));
 	    }
 	
 	    _createClass(MailTo, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            var _this2 = this;
-	
-	            _TodoStore2.default.on('change', function () {
-	                _this2.getAddress();
-	            });
+	        key: 'clickHandler',
+	        value: function clickHandler(e) {
+	            this.props.mailSwitch();
 	        }
 	    }, {
-	        key: 'getAddress',
-	        value: function getAddress(e) {
-	            if (this.props.todos.length === 0) {
-	                return;
-	            }
-	            var address = void 0;
-	            try {
-	                address = e.target.value;
-	            } catch (e) {
-	                address = this.state.address;
-	            }
-	
-	            var reg = /.*@[^\.]*\..*/;
-	            var body = this.props.todos.map(function (item, index) {
-	                return index + 1 + ' ' + item.text + '%0D%0A';
-	            });
-	            //body = body.toString().replace(/\s+/g, '%20')
-	            body = body.reduce(function (x, y) {
-	                return x.toString().replace(/\s+/g, '%20') + y.toString().replace(/\s+/g, '%20');
-	                //return x + y
-	            });
-	            var subject = 'to-do-list@' + new Date().toString().replace(/\s+/g, '%20');
-	            var href = 'mailto:' + address + '?subject=' + subject + '&body=' + body;
-	            this.setState({
-	                address: address,
-	                href: href });
-	            if (reg.exec(this.state.address)) {
-	                this.setState({ addressLegle: true });
-	            }
-	        }
-	    }, {
-	        key: 'showInput',
-	        value: function showInput() {
-	            var tag = ['Send this to-do-list as Email to:', 'CANCEL'];
-	            var toggle = !this.state.showInput;
-	            this.setState({
-	                showInput: toggle,
-	                buttonTag: tag[toggle ? 1 : 0]
-	            });
+	        key: 'changeHandler',
+	        value: function changeHandler(e) {
+	            this.props.mailInput(e.target.value);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var input = this.state.showInput ? _react2.default.createElement(
+	            var input = this.props.mailto.showInput ? _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement('input', { type: 'text',
+	                _react2.default.createElement('input', {
 	                    style: styleSheet.input,
-	                    onChange: this.getAddress.bind(this),
-	                    value: this.props.todos.length > 0 ? this.state.address : 'No todo item yet'
+	                    value: this.props.todos.length > 0 ? this.props.mailto.address : 'No todo item yet', type: 'text',
+	                    onChange: this.changeHandler.bind(this)
 	                }),
 	                _react2.default.createElement('br', null),
 	                _react2.default.createElement(
 	                    'a',
-	                    { href: this.state.href },
+	                    { href: this.props.mailto.href },
 	                    _react2.default.createElement(
 	                        'button',
-	                        { disabled: this.props.todos.length > 0 && this.state.addressLegle ? false : true, style: styleSheet.button },
+	                        {
+	                            disabled: this.props.todos.length > 0 && this.props.mailto.addressLegale ? false : true,
+	                            style: styleSheet.button },
 	                        'SEND'
 	                    )
 	                )
 	            ) : _react2.default.createElement('div', null);
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'mailto' },
+	                { style: styleSheet.box },
 	                _react2.default.createElement(
 	                    'button',
-	                    { onClick: this.showInput.bind(this), style: styleSheet.button },
-	                    this.state.buttonTag
+	                    { onClick: this.clickHandler.bind(this),
+	                        style: styleSheet.button },
+	                    this.props.mailto.buttonTag[this.props.mailto.showInput ? 1 : 0]
 	                ),
 	                input
 	            );
@@ -22921,6 +22959,10 @@
 	        WebkitBoxSizing: 'content-box',
 	        boxSizing: 'content-box',
 	        textAlign: 'center'
+	    },
+	    box: {
+	        marginTop: '50px',
+	        textAlign: 'center'
 	    }
 	};
 
@@ -22938,6 +22980,8 @@
 	exports.CompleteToggle = CompleteToggle;
 	exports.ClearCompleted = ClearCompleted;
 	exports.ShowCate = ShowCate;
+	exports.SwitchMail = SwitchMail;
+	exports.inputMailAddress = inputMailAddress;
 	
 	var _Dispatcher = __webpack_require__(182);
 	
@@ -22977,6 +23021,20 @@
 	    _Dispatcher2.default.dispatch({
 	        type: 'SHOW_CATE',
 	        payload: value
+	    });
+	}
+	
+	function SwitchMail() {
+	    _Dispatcher2.default.dispatch({
+	        type: 'SWITCH_MAIL',
+	        payload: ''
+	    });
+	}
+	
+	function inputMailAddress(text) {
+	    _Dispatcher2.default.dispatch({
+	        type: 'MAIL_INPUT',
+	        payload: text
 	    });
 	}
 
